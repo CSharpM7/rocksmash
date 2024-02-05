@@ -1,0 +1,7 @@
+display_name="Rock Smash"
+description="""
+Requires Smashline 2 and Skyline
+"""
+version="1.0"
+category="Param"
+authors="C#"
