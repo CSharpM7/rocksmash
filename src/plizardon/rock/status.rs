@@ -18,8 +18,8 @@ pub unsafe extern "C" fn rock_start_pre(weapon: &mut smashline::L2CWeaponCommon)
 
 pub unsafe extern "C" fn rock_start_main(weapon: &mut smashline::L2CWeaponCommon) -> L2CValue {
     let life = 3;//WorkModule::get_param_int(weapon.module_accessor, hash40("param_rock"), hash40("life"));
-    WorkModule::set_int(weapon.module_accessor, life, *WEAPON_INSTANCE_WORK_ID_INT_INIT_LIFE);
-    WorkModule::set_int(weapon.module_accessor, life, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
+    WorkModule::set_int(weapon.module_accessor, life, WEAPON_PLIZARDON_ROCK_INSTANCE_WORK_ID_INT_STONES_MAX);
+    WorkModule::set_int(weapon.module_accessor, life, WEAPON_PLIZARDON_ROCK_INSTANCE_WORK_ID_INT_STONES_REMAINING);
     WorkModule::set_int(weapon.module_accessor, 0, WEAPON_PLIZARDON_ROCK_INSTANCE_WORK_ID_INT_SPAWN_COOLDOWN);
 
     MotionModule::change_motion(weapon.module_accessor as _, Hash40::new("haved"), 0.0, 1.0, false, 0.0, false, false);
@@ -28,10 +28,11 @@ pub unsafe extern "C" fn rock_start_main(weapon: &mut smashline::L2CWeaponCommon
 
 unsafe extern "C" fn rock_start_main_status_loop(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     snap_to_owner(weapon);
+
     if WorkModule::is_flag(weapon.module_accessor,WEAPON_PLIZARDON_ROCK_INSTANCE_WORK_ID_FLAG_BREAK) {
         VisibilityModule::set_whole(weapon.module_accessor, false);
 
-        //spawn rock
+        //spawn stones
         WorkModule::dec_int(weapon.module_accessor, WEAPON_PLIZARDON_ROCK_INSTANCE_WORK_ID_INT_SPAWN_COOLDOWN);
         if  WorkModule::get_int(weapon.module_accessor, WEAPON_PLIZARDON_ROCK_INSTANCE_WORK_ID_INT_SPAWN_COOLDOWN) <= 0 {
             WorkModule::set_int(weapon.module_accessor, 1, WEAPON_PLIZARDON_ROCK_INSTANCE_WORK_ID_INT_SPAWN_COOLDOWN);
@@ -40,17 +41,10 @@ unsafe extern "C" fn rock_start_main_status_loop(weapon: &mut smashline::L2CWeap
             ArticleModule::generate_article(owner, FIGHTER_PLIZARDON_GENERATE_ARTICLE_ROCKSTONE, false, -1) as u32;
             WorkModule::inc_int(owner,*FIGHTER_PLIZARDON_STATUS_BREATH_WORK_INT_GENERATE_COUNT);
 
-            if WorkModule::count_down_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LIFE, 0) {
+            if WorkModule::count_down_int(weapon.module_accessor, WEAPON_PLIZARDON_ROCK_INSTANCE_WORK_ID_INT_STONES_REMAINING, 0) {
                 smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
             }
         }
-        /* 
-        for i in 0..3 {
-            let owner = get_owner_boma(weapon);
-            ArticleModule::generate_article(owner, FIGHTER_PLIZARDON_GENERATE_ARTICLE_ROCKSTONE, false, -1) as u32;
-            WorkModule::inc_int(owner,*FIGHTER_PLIZARDON_STATUS_BREATH_WORK_INT_GENERATE_COUNT);
-        }
-        smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));*/
     }
     0.into()
 }
@@ -89,7 +83,7 @@ unsafe extern "C" fn snap_to_owner(weapon: &mut smashline::L2CWeaponCommon) {
     let lr = PostureModule::lr(owner);
     let owner_offset = ModelModule::joint_global_offset_from_top(owner, Hash40{hash: hash40("throw")}, &mut ownerPos);  
     let cap_offset = ModelModule::joint_global_offset_from_top(weapon.module_accessor, Hash40{hash: hash40("have")}, &mut capPos);      
-    let offset = Vector3f{x:-2.0*lr,y:2.0,z:0.0};
+    let offset = Vector3f{x:-1.0*lr,y:1.0,z:0.0};
     let newPos = Vector3f{x: PostureModule::pos_x(owner) + ownerPos.x - capPos.x + (offset.x), y: PostureModule::pos_y(owner) + ownerPos.y + offset.y, z: PostureModule::pos_z(owner) + ownerPos.z- capPos.z + offset.z};
     PostureModule::set_pos(weapon.module_accessor, &newPos);
 

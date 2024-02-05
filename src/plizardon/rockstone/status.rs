@@ -8,7 +8,7 @@ pub unsafe extern "C" fn rockstone_start_init(weapon: &mut smashline::L2CWeaponC
     let num_rock = WorkModule::get_int(owner, *FIGHTER_PLIZARDON_STATUS_BREATH_WORK_INT_GENERATE_COUNT);
     let rand_angle = sv_math::rand(hash40("fighter"), 30) as i32;
     let mut angle = (((num_rock) * 110)-45) + rand_angle;
-    //prevent going behind too far
+    //prevent going too far behind
     while (angle > 100 && angle < 260) {
         angle+=25;
     }
@@ -51,7 +51,6 @@ pub unsafe extern "C" fn rockstone_start_main(weapon: &mut smashline::L2CWeaponC
     let life = 1;
     WorkModule::set_int(weapon.module_accessor, life, *WEAPON_INSTANCE_WORK_ID_INT_INIT_LIFE);
     WorkModule::set_int(weapon.module_accessor, life, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
-    HitModule::set_status_all(weapon.module_accessor,HitStatus(*HIT_STATUS_OFF),0);
     //Set Motion
     MotionModule::change_motion(weapon.module_accessor, Hash40::new("stay"), 0.0, 1.0, false, 0.0, false, false);
 
@@ -91,13 +90,10 @@ pub unsafe extern "C" fn rockstone_move_pre(weapon: &mut smashline::L2CWeaponCom
 pub unsafe extern "C" fn rockstone_move_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     let angle = WorkModule::get_int(weapon.module_accessor, WEAPON_PLIZARDON_ROCKSTONE_INSTANCE_WORK_ID_INT_ANGLE) as f32;
 
-    //let angle = (sv_math::rand(hash40("fighter"), 360) as f32);
-    //WorkModule::set_int(weapon.module_accessor, angle as i32, WEAPON_PLIZARDON_ROCKSTONE_INSTANCE_WORK_ID_INT_ANGLE);
-
     //Kinetics
     let lr = PostureModule::lr(weapon.module_accessor);
     KineticModule::enable_energy(weapon.module_accessor, *WEAPON_KINETIC_ENERGY_RESERVE_ID_NORMAL);
-    let speed = 2.0;
+    let speed = 2.0; //WorkModule::get_param_float(weapon.module_accessor, hash40("param_rockstone"), hash40("speed"));
     let speed_x = (angle.to_radians()).cos()*speed;
     let speed_y = (angle.to_radians()).sin()*speed;
     sv_kinetic_energy!(
@@ -125,9 +121,7 @@ pub unsafe extern "C" fn rockstone_move_main(weapon: &mut smashline::L2CWeaponCo
     WorkModule::set_int(weapon.module_accessor, life, *WEAPON_INSTANCE_WORK_ID_INT_INIT_LIFE);
     WorkModule::set_int(weapon.module_accessor, life, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
 
-    WorkModule::off_flag(weapon.module_accessor, *WEAPON_KOOPAJR_CANNONBALL_INSTANCE_WORK_ID_FLAG_HOP);
     WorkModule::off_flag(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_FLAG_SWALLOWED);
-    HitModule::set_status_all(weapon.module_accessor,HitStatus(*HIT_STATUS_OFF),0);
     
     if StopModule::is_stop(weapon.module_accessor){
         WorkModule::dec_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
@@ -140,7 +134,6 @@ pub unsafe extern "C" fn rockstone_move_main(weapon: &mut smashline::L2CWeaponCo
 }
 
 unsafe extern "C" fn rockstone_move_main_substatus(weapon: &mut L2CWeaponCommon, param_3: L2CValue) -> L2CValue {
-
     0.into()
 }
 
@@ -169,12 +162,11 @@ unsafe extern "C" fn rockstone_move_main_status_loop(weapon: &mut smashline::L2C
     let reflected = AttackModule::is_infliction(weapon.module_accessor,*COLLISION_KIND_MASK_REFLECTOR);
     let was_reflected = WorkModule::is_flag(weapon.module_accessor, *WEAPON_SHEIK_NEEDLE_STATUS_WORK_FLAG_INFLICT);
     if (reflected && !was_reflected) {
-        //Reflect upwards (remove to have it not reflect)
         KineticModule::reflect_speed(weapon.module_accessor,  &Vector3f{x: 0.75, y: 0.75, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
         KineticModule::mul_accel(weapon.module_accessor,  &Vector3f{x: 0.0, y: 0.0, z: 0.0}, *KINETIC_ENERGY_RESERVE_ATTRIBUTE_ALL);
         
-        let new_life = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_INIT_LIFE);
-        WorkModule::set_int(weapon.module_accessor, new_life, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
+        //let new_life = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_INIT_LIFE);
+        //WorkModule::set_int(weapon.module_accessor, new_life, *WEAPON_INSTANCE_WORK_ID_INT_LIFE);
 
         WorkModule::on_flag(weapon.module_accessor, *WEAPON_SHEIK_NEEDLE_STATUS_WORK_FLAG_INFLICT);
         return 0.into();
