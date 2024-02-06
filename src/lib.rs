@@ -18,8 +18,10 @@ pub mod imports;
 pub mod vars;
 
 mod plizardon;
+mod other_fighters;
 
 #[skyline::main(name = "smashline_rocksmash")]
 pub fn main() {
     plizardon::install();
+    other_fighters::install();
 }

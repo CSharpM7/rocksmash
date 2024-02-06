@@ -1,5 +1,6 @@
 display_name="Rock Smash"
 description="""
+It's not just a boulder...it's a rock! Replaces Flamethrower
 Requires Smashline 2 and Skyline
 """
 version="1.0"
