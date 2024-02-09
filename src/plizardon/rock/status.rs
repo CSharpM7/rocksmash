@@ -96,6 +96,7 @@ unsafe extern "C" fn snap_to_owner(weapon: &mut smashline::L2CWeaponCommon) {
         &rot,
         0
     );
+    PostureModule::update_rot_y_lr(weapon.module_accessor);
 }
 
 pub fn install() {    
