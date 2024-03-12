@@ -69,14 +69,14 @@ pub unsafe extern "C" fn expression_specialn(agent: &mut L2CAgentBase) {
 
 pub fn install() {
     Agent::new("plizardon")
-        .game_acmd("game_specialn", game_specialn)
-        .game_acmd("game_specialairn", game_specialn)
-        .effect_acmd("effect_specialn", effect_specialn)
-        .effect_acmd("effect_specialairn", effect_specialn)
-        .sound_acmd("sound_specialn", sound_specialn)
-        .sound_acmd("sound_specialairn", sound_specialn)
-        .expression_acmd("expression_specialn", expression_specialn)
-        .expression_acmd("expression_specialairn", expression_specialn)
+        .acmd("game_specialn", game_specialn)
+        .acmd("game_specialairn", game_specialn)
+        .acmd("effect_specialn", effect_specialn)
+        .acmd("effect_specialairn", effect_specialn)
+        .acmd("sound_specialn", sound_specialn)
+        .acmd("sound_specialairn", sound_specialn)
+        .acmd("expression_specialn", expression_specialn)
+        .acmd("expression_specialairn", expression_specialn)
         
     .install();
 }

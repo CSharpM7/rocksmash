@@ -85,12 +85,12 @@ unsafe extern "C" fn effect_attacks4charge(agent: &mut L2CAgentBase) {
 
 pub fn install() {
     Agent::new("plizardon")
-        .game_acmd("game_attacks4", game_attacks4)
-        .effect_acmd("effect_attacks4", effect_attacks4)
-        .sound_acmd("sound_attacks4", sound_attacks4)
-        .expression_acmd("expression_attacks4", expression_attacks4)
+        .acmd("game_attacks4", game_attacks4)
+        .acmd("effect_attacks4", effect_attacks4)
+        .acmd("sound_attacks4", sound_attacks4)
+        .acmd("expression_attacks4", expression_attacks4)
         
-        .effect_acmd("effect_attacks4charge", effect_attacks4charge)
+        .acmd("effect_attacks4charge", effect_attacks4charge)
         
     .install();
 }
