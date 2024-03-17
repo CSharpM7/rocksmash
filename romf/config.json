@@ -26,24 +26,6 @@
             "fighter/plizardon/motion/body/c05/motion_list.bin",
             "fighter/plizardon/motion/body/c06/motion_list.bin",
             "fighter/plizardon/motion/body/c07/motion_list.bin"
-        ],
-        "fighter/plizardon/motion/rock/c00/update.prc": [
-            "fighter/plizardon/motion/rock/c01/update.prc",
-            "fighter/plizardon/motion/rock/c02/update.prc",
-            "fighter/plizardon/motion/rock/c03/update.prc",
-            "fighter/plizardon/motion/rock/c04/update.prc",
-            "fighter/plizardon/motion/rock/c05/update.prc",
-            "fighter/plizardon/motion/rock/c06/update.prc",
-            "fighter/plizardon/motion/rock/c07/update.prc"
-        ],
-        "fighter/plizardon/motion/rockstone/c00/update.prc": [
-            "fighter/plizardon/motion/rockstone/c01/update.prc",
-            "fighter/plizardon/motion/rockstone/c02/update.prc",
-            "fighter/plizardon/motion/rockstone/c03/update.prc",
-            "fighter/plizardon/motion/rockstone/c04/update.prc",
-            "fighter/plizardon/motion/rockstone/c05/update.prc",
-            "fighter/plizardon/motion/rockstone/c06/update.prc",
-            "fighter/plizardon/motion/rockstone/c07/update.prc"
         ]
     },
     "new-dir-files": {

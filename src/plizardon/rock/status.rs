@@ -23,12 +23,23 @@ pub unsafe extern "C" fn rock_start_main(weapon: &mut smashline::L2CWeaponCommon
     WorkModule::set_int(weapon.module_accessor, 0, WEAPON_PLIZARDON_ROCK_INSTANCE_WORK_ID_INT_SPAWN_COOLDOWN);
 
     MotionModule::change_motion(weapon.module_accessor as _, Hash40::new("haved"), 0.0, 1.0, false, 0.0, false, false);
+    
+    let owner = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LINK_OWNER) as u32;
+    
+    //HAVE constraint
+    LinkModule::remove_model_constraint(weapon.module_accessor,true);
+    if LinkModule::is_link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT) {
+        LinkModule::unlink_all(weapon.module_accessor);
+    }
+    if LinkModule::is_link(weapon.module_accessor,*ITEM_LINK_NO_HAVE) == false {
+        LinkModule::link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT,owner);
+        LinkModule::set_model_constraint_pos_ort(weapon.module_accessor,*LINK_NO_CONSTRAINT,Hash40::new("have"),Hash40::new("throw"),*CONSTRAINT_FLAG_ORIENTATION as u32 | *CONSTRAINT_FLAG_POSITION as u32,true);
+    }
+
     weapon.fastshift(L2CValue::Ptr(rock_start_main_status_loop as *const () as _)).into()
 }
 
 unsafe extern "C" fn rock_start_main_status_loop(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    snap_to_owner(weapon);
-
     if WorkModule::is_flag(weapon.module_accessor,WEAPON_PLIZARDON_ROCK_INSTANCE_WORK_ID_FLAG_BREAK) {
         VisibilityModule::set_whole(weapon.module_accessor, false);
 
@@ -74,29 +85,6 @@ unsafe extern "C" fn delete_if_orphaned(weapon: &mut smashline::L2CWeaponCommon)
     if should_delete == true {
         smash_script::notify_event_msc_cmd!(weapon, Hash40::new_raw(0x199c462b5d));
     }
-}
-
-unsafe extern "C" fn snap_to_owner(weapon: &mut smashline::L2CWeaponCommon) {
-    let owner = get_owner_boma(weapon);
-    let mut ownerPos = VECTOR_ZERO;
-    let mut capPos = VECTOR_ZERO;
-    let lr = PostureModule::lr(owner);
-    let owner_offset = ModelModule::joint_global_offset_from_top(owner, Hash40{hash: hash40("throw")}, &mut ownerPos);  
-    let cap_offset = ModelModule::joint_global_offset_from_top(weapon.module_accessor, Hash40{hash: hash40("have")}, &mut capPos);      
-    let offset = Vector3f{x:-1.0*lr,y:1.0,z:0.0};
-    let newPos = Vector3f{x: PostureModule::pos_x(owner) + ownerPos.x - capPos.x + (offset.x), y: PostureModule::pos_y(owner) + ownerPos.y + offset.y, z: PostureModule::pos_z(owner) + ownerPos.z- capPos.z + offset.z};
-    PostureModule::set_pos(weapon.module_accessor, &newPos);
-
-    
-    let mut vec =Vector3f{x: 0.0, y: 0.0, z: 0.0};
-    let offset = ModelModule::joint_global_rotation(owner,Hash40::new("throw"),&mut vec,false);
-    let rot = Vector3f{x: vec.x, y: 0.0, z: 0.0};
-    PostureModule::set_rot(
-        weapon.module_accessor,
-        &rot,
-        0
-    );
-    PostureModule::update_rot_y_lr(weapon.module_accessor);
 }
 
 pub fn install() {    
