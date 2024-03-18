@@ -16,12 +16,16 @@ extern crate lazy_static;
 
 pub mod imports;
 pub mod vars;
+mod installer;
 
 mod plizardon;
 mod other_fighters;
 
 #[skyline::main(name = "smashline_rocksmash")]
 pub fn main() {
-    plizardon::install();
-    other_fighters::install();
+    #[cfg(not(feature = "dev"))]{ 
+        installer::install();
+    }
+    #[cfg(feature = "dev")]
+    installer::smashline_install();
 }
