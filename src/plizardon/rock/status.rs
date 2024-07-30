@@ -26,7 +26,7 @@ pub unsafe extern "C" fn rock_start_main(weapon: &mut smashline::L2CWeaponCommon
     
     let owner = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LINK_OWNER) as u32;
     
-    //HAVE constraint
+    //HAVE constraint. Tie the Rock's "have" bone to Zard's "throw" bone
     //Pretty sure most things until set model constraint arent necessary...
     LinkModule::remove_model_constraint(weapon.module_accessor,true);
     if LinkModule::is_link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT) {
