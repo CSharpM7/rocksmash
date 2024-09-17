@@ -35,6 +35,8 @@ pub mod imports_acmd {
             //getvar::*
         },
     };
+    pub unsafe extern "C" fn empty_acmd(agent: &mut L2CAgentBase) {
+    }
 }
 
 pub mod imports_agent {
@@ -63,6 +65,7 @@ pub mod imports_agent {
             Main,
         },
         crate::vars::*,
+        //crate::util::*,
         //crate::singleslot::*,
         //crate::data::gamemode::*,
         sharpsmashlinesuite::{
@@ -75,6 +78,9 @@ pub mod imports_agent {
             //getvar::*
         },
     };
+    pub unsafe extern "C" fn empty_status(agent: &mut L2CAgentBase) -> L2CValue {
+        0.into()
+    }
 }
 pub mod imports_status {
     pub use {

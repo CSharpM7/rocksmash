@@ -9,7 +9,7 @@ pub unsafe extern "C" fn game_move(agent: &mut L2CAgentBase) {
 
 pub fn install() {
     Agent::new("plizardon_rockstone")
-        .acmd("game_move", game_move)
+        .acmd("game_move", game_move,Priority::Default)
         
     .install();
 }
