@@ -12,7 +12,6 @@ pub unsafe extern "C" fn rockstone_start_init(weapon: &mut smashline::L2CWeaponC
     while (angle > 100 && angle < 260) {
         angle+=25;
     }
-
     WorkModule::set_int(weapon.module_accessor, angle, WEAPON_PLIZARDON_ROCKSTONE_INSTANCE_WORK_ID_INT_ANGLE);
 
     //Rot
@@ -20,17 +19,17 @@ pub unsafe extern "C" fn rockstone_start_init(weapon: &mut smashline::L2CWeaponC
     WorkModule::set_int(weapon.module_accessor, angle, WEAPON_PLIZARDON_ROCKSTONE_INSTANCE_WORK_ID_INT_ROT);
     
     //Snap to throw position
-    let mut owner_pos = Vector3f{x:0.0,y:0.0,z:0.0};
-    let mut article_pos = Vector3f{x:0.0,y:0.0,z:0.0};
-    let mut offset_add = Vector3f{x:0.0,y:0.0,z:0.0};
-    let lr = PostureModule::lr(owner);
-    let owner_offset = ModelModule::joint_global_offset_from_top(owner, Hash40{hash: hash40("throw")}, &mut owner_pos);  
-    let cap_offset = ModelModule::joint_global_offset_from_top(weapon.module_accessor, Hash40{hash: hash40("have")}, &mut article_pos);       
-    let newPos = Vector3f{x: PostureModule::pos_x(owner) + owner_pos.x - article_pos.x + (offset_add.x*lr), y: PostureModule::pos_y(owner) + owner_pos.y - (article_pos.y)+ offset_add.y, z: PostureModule::pos_z(owner) + owner_pos.z - article_pos.z};
-    PostureModule::set_pos(weapon.module_accessor, &newPos);
+	LinkModule::remove_model_constraint(weapon.module_accessor,true);
+	LinkModule::set_model_constraint_pos_ort(weapon.module_accessor,*LINK_NO_CONSTRAINT,Hash40::new("have"),Hash40::new("throw"),(*CONSTRAINT_FLAG_ORIENTATION | *CONSTRAINT_FLAG_POSITION | *CONSTRAINT_FLAG_OFFSET_ROT | *CONSTRAINT_FLAG_OFFSET_TRANSLATE) as u32,true);
+    let rot_offset = Vector3f{x:0.0,y:0.0,z:0.0};
+    let trans_offset = Vector3f{x:0.0,y:0.0,z:0.0};
+    LinkModule::set_constraint_rot_offset(weapon.module_accessor, &rot_offset);
+    LinkModule::set_constraint_translate_offset(weapon.module_accessor, &trans_offset);
 
+    LinkModule::remove_model_constraint(weapon.module_accessor,false);
     0.into()
 }
+
 pub unsafe extern "C" fn rockstone_start_pre(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
     StatusModule::init_settings(
         weapon.module_accessor,

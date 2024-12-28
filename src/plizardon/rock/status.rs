@@ -32,7 +32,7 @@ pub unsafe extern "C" fn rock_start_main(weapon: &mut smashline::L2CWeaponCommon
     if LinkModule::is_link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT) {
         LinkModule::unlink_all(weapon.module_accessor);
     }
-    if LinkModule::is_link(weapon.module_accessor,*ITEM_LINK_NO_HAVE) == false {
+    if LinkModule::is_link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT) == false {
         LinkModule::link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT,owner);
         LinkModule::set_model_constraint_pos_ort(weapon.module_accessor,*LINK_NO_CONSTRAINT,Hash40::new("have"),Hash40::new("throw"),(*CONSTRAINT_FLAG_ORIENTATION | *CONSTRAINT_FLAG_POSITION) as u32,true);
     }
