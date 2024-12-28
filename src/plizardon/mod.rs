@@ -16,7 +16,7 @@ pub fn install() {
     rockstone::install();
 
     unsafe {
-        smashline::clone_weapon("link", *WEAPON_KIND_LINK_BOOMERANG, "plizardon", "rock", false);
-        smashline::clone_weapon("sheik", *WEAPON_KIND_SHEIK_NEEDLE, "plizardon", "rockstone", false);
+        crate::vars::FIGHTER_PLIZARDON_GENERATE_ARTICLE_ROCK = *FIGHTER_PLIZARDON_ARTICLE_TERM + smashline::clone_weapon("link", *WEAPON_KIND_LINK_BOOMERANG, "plizardon", "rock", false);
+		crate::vars::FIGHTER_PLIZARDON_GENERATE_ARTICLE_ROCKSTONE = *FIGHTER_PLIZARDON_ARTICLE_TERM + smashline::clone_weapon("sheik", *WEAPON_KIND_SHEIK_NEEDLE, "plizardon", "rockstone", false);
     }
 }
