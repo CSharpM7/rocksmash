@@ -30,11 +30,12 @@ pub unsafe extern "C" fn rock_start_main(weapon: &mut smashline::L2CWeaponCommon
     //Pretty sure most things until set model constraint arent necessary...
     LinkModule::remove_model_constraint(weapon.module_accessor,true);
     if LinkModule::is_link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT) {
-        LinkModule::unlink_all(weapon.module_accessor);
+        LinkModule::unlink(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT);
     }
-    if LinkModule::is_link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT) == false {
-        LinkModule::link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT,owner);
-        LinkModule::set_model_constraint_pos_ort(weapon.module_accessor,*LINK_NO_CONSTRAINT,Hash40::new("have"),Hash40::new("throw"),(*CONSTRAINT_FLAG_ORIENTATION | *CONSTRAINT_FLAG_POSITION) as u32,true);
+    let link_created = LinkModule::link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT,owner);
+    if link_created & 1 != 0 {
+        LinkModule::set_model_constraint_pos_ort(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT,Hash40::new("have"),Hash40::new("throw"),(*CONSTRAINT_FLAG_ORIENTATION | *CONSTRAINT_FLAG_POSITION) as u32,true);
+        LinkModule::set_attribute(weapon.module_accessor, *WEAPON_LINK_NO_CONSTRAINT, LinkAttribute{_address: *LINK_ATTRIBUTE_REFERENCE_PARENT_SCALE as u8}, true);
     }
 
     weapon.fastshift(L2CValue::Ptr(rock_start_main_status_loop as *const () as _)).into()

@@ -2,10 +2,11 @@ use crate::imports::imports_acmd::*;
 
 
 pub unsafe extern "C" fn rockstone_start_init(weapon: &mut smashline::L2CWeaponCommon) -> smashline::L2CValue {
-    let owner = &mut *sv_battle_object::module_accessor((WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_LINK_OWNER)) as u32);
+    let owner = WorkModule::get_int(weapon.module_accessor, *WEAPON_INSTANCE_WORK_ID_INT_ACTIVATE_FOUNDER_ID) as u32;
+    let owner_boma = &mut *sv_battle_object::module_accessor(owner);
 
     //Angle
-    let num_rock = WorkModule::get_int(owner, *FIGHTER_PLIZARDON_STATUS_BREATH_WORK_INT_GENERATE_COUNT);
+    let num_rock = WorkModule::get_int(owner_boma, *FIGHTER_PLIZARDON_STATUS_BREATH_WORK_INT_GENERATE_COUNT);
     let rand_angle = sv_math::rand(hash40("fighter"), 30) as i32;
     let mut angle = (((num_rock) * 110)-45) + rand_angle;
     //prevent going too far behind
@@ -19,14 +20,15 @@ pub unsafe extern "C" fn rockstone_start_init(weapon: &mut smashline::L2CWeaponC
     WorkModule::set_int(weapon.module_accessor, angle, WEAPON_PLIZARDON_ROCKSTONE_INSTANCE_WORK_ID_INT_ROT);
     
     //Snap to throw position
-	LinkModule::remove_model_constraint(weapon.module_accessor,true);
-	LinkModule::set_model_constraint_pos_ort(weapon.module_accessor,*LINK_NO_CONSTRAINT,Hash40::new("have"),Hash40::new("throw"),(*CONSTRAINT_FLAG_ORIENTATION | *CONSTRAINT_FLAG_POSITION | *CONSTRAINT_FLAG_OFFSET_ROT | *CONSTRAINT_FLAG_OFFSET_TRANSLATE) as u32,true);
-    let rot_offset = Vector3f{x:0.0,y:0.0,z:0.0};
-    let trans_offset = Vector3f{x:0.0,y:0.0,z:0.0};
-    LinkModule::set_constraint_rot_offset(weapon.module_accessor, &rot_offset);
-    LinkModule::set_constraint_translate_offset(weapon.module_accessor, &trans_offset);
-
-    LinkModule::remove_model_constraint(weapon.module_accessor,false);
+    if LinkModule::is_link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT) {
+        LinkModule::unlink(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT);
+    }
+    let link_created = LinkModule::link(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT,owner);
+    if link_created & 1 != 0 {
+        LinkModule::set_model_constraint_pos_ort(weapon.module_accessor,*WEAPON_LINK_NO_CONSTRAINT,Hash40::new("top"),Hash40::new("throw"),(*CONSTRAINT_FLAG_ORIENTATION | *CONSTRAINT_FLAG_POSITION) as u32,true);
+        LinkModule::set_attribute(weapon.module_accessor, *WEAPON_LINK_NO_CONSTRAINT, LinkAttribute{_address: *LINK_ATTRIBUTE_REFERENCE_PARENT_SCALE as u8}, true);
+        LinkModule::remove_model_constraint(weapon.module_accessor,true);
+    }
     0.into()
 }
 
